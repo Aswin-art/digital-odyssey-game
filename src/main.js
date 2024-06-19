@@ -235,7 +235,7 @@ const scenes = {
 };
 
 for (const sceneName in scenes) {
-  k.scene(sceneName, () => scenes[sceneName](k));
+  k.scene(sceneName, (args) => scenes[sceneName](k, args));
 }
 
 k.load(

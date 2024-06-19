@@ -17,7 +17,7 @@ async function displayLine(textContainer, line) {
   stopTypingEffect();
 }
 
-export async function dialogue(k, pos, content) {
+export async function dialogue(k, pos, content, state = "ongoing") {
   gameState.setFreezePlayer(true);
   const dialogBox = k.add([k.rect(800, 200), k.pos(pos), k.fixed()]);
   const textContainer = dialogBox.add([
@@ -42,6 +42,9 @@ export async function dialogue(k, pos, content) {
 
     index++;
     if (!content[index]) {
+      if (state === "win") {
+        k.go("gameover", "win");
+      }
       k.destroy(dialogBox);
       dialogKey.cancel();
       gameState.setFreezePlayer(false);

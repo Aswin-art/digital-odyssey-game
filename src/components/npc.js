@@ -153,12 +153,11 @@ export async function startInteraction(k, npc, player) {
       await dialogue(
         k,
         k.vec2(k.width() / 2 - 500 / 2 - 100, k.height() - 250),
-        responses[numberTalked]
+        responses[numberTalked],
+        "win"
       );
       NPCState.setNumberTalkedOldMan(numberTalked + 1);
     }
-
-    k.go("gameover", "win");
   }
 }
 
