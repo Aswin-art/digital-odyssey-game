@@ -4,10 +4,7 @@ import {
   drawTiles,
   fetchMapData,
 } from "../../utils.js";
-import {
-  generatePlayerComponents,
-  setPlayerMovement,
-} from "../components/player.js";
+import { Player } from "../components/player.js"; // Correctly import the Player class
 import { gameState } from "../states/index.js";
 import { healthBar } from "../states/healthbar.js";
 import {
@@ -39,9 +36,7 @@ export default async function house(k) {
     if (layer.name === "SpawnPoints") {
       for (const object of layer.objects) {
         if (object.name === "player") {
-          entities.player = map.add(
-            generatePlayerComponents(k, k.vec2(object.x, object.y))
-          );
+          entities.player = new Player(k, k.vec2(object.x, object.y));
         }
       }
       continue;
@@ -51,13 +46,14 @@ export default async function house(k) {
   }
 
   k.camScale(6);
-  k.camPos(entities.player.worldPos());
+  k.camPos(entities.player.player.worldPos()); // Adjusted to access the player instance's properties
 
   k.onUpdate(async () => {
-    if (entities.player.pos.dist(k.camPos())) {
+    if (entities.player.player.pos.dist(k.camPos())) {
+      // Adjusted to access the player instance's properties
       await k.tween(
         k.camPos(),
-        entities.player.worldPos(),
+        entities.player.player.worldPos(), // Adjusted to access the player instance's properties
         0.2,
         (newPos) => k.camPos(newPos),
         k.easings.linear
@@ -65,9 +61,8 @@ export default async function house(k) {
     }
   });
 
-  setPlayerMovement(k, entities.player);
-
-  entities.player.onCollide("door-exit", () => {
+  entities.player.player.onCollide("door-exit", () => {
+    // Adjusted to access the player instance's properties
     gameState.setPreviousScene("house");
     k.go("halaman");
   });

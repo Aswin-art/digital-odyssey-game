@@ -3,14 +3,8 @@ import {
   drawBoundaries,
   drawTiles,
   fetchMapData,
-  onAttacked,
-  onCollideWithPlayer,
 } from "../../utils.js";
-import {
-  generatePlayerComponents,
-  setPlayerMovement,
-} from "../components/player.js";
-// import { generateMonsterComponents, setSlimeAI } from "../components/slime.js";
+import { Player } from "../components/player.js"; // Import the Player class
 import { gameState } from "../states/index.js";
 import { healthBar } from "../states/healthbar.js";
 import {
@@ -51,34 +45,26 @@ export default async function village(k) {
           object.name === "player-hutan-kiri" &&
           gameState.getPreviousScene() === "hutanKiri"
         ) {
-          entities.player = map.add(
-            generatePlayerComponents(k, k.vec2(object.x, object.y))
-          );
+          entities.player = new Player(k, k.vec2(object.x, object.y));
         }
         if (
           object.name === "player-hutan-atas" &&
           gameState.getPreviousScene() === "hutanAtas"
         ) {
-          entities.player = map.add(
-            generatePlayerComponents(k, k.vec2(object.x, object.y))
-          );
+          entities.player = new Player(k, k.vec2(object.x, object.y));
         }
         if (
           object.name === "player-hutan-bawah" &&
           gameState.getPreviousScene() === "hutanBawah"
         ) {
-          entities.player = map.add(
-            generatePlayerComponents(k, k.vec2(object.x, object.y))
-          );
+          entities.player = new Player(k, k.vec2(object.x, object.y));
         }
 
         if (
           object.name === "player" &&
           gameState.getPreviousScene() == "halaman"
         ) {
-          entities.player = map.add(
-            generatePlayerComponents(k, k.vec2(object.x, object.y))
-          );
+          entities.player = new Player(k, k.vec2(object.x, object.y));
         }
 
         if (object.name === "npc") {
@@ -101,13 +87,13 @@ export default async function village(k) {
   }
 
   k.camScale(5);
-  k.camPos(entities.player.worldPos());
+  k.camPos(entities.player.player.worldPos());
 
   k.onUpdate(async () => {
-    if (entities.player.pos.dist(k.camPos())) {
+    if (entities.player.player.pos.dist(k.camPos())) {
       await k.tween(
         k.camPos(),
-        entities.player.worldPos(),
+        entities.player.player.worldPos(),
         0.2,
         (newPos) => k.camPos(newPos),
         k.easings.linear
@@ -115,21 +101,20 @@ export default async function village(k) {
     }
   });
 
-  setPlayerMovement(k, entities.player);
-
-  entities.player.onCollide("npc", () => {
-    startInteraction(k, entities.npc, entities.player);
+  entities.player.player.onCollide("npc", () => {
+    startInteraction(k, entities.npc, entities.player.player);
   });
 
-  entities.player.onCollideEnd("npc", () => {
+  entities.player.player.onCollideEnd("npc", () => {
     endInteraction(entities.npc);
   });
 
-  entities.player.onCollide("exit-rumah", () => {
+  entities.player.player.onCollide("exit-rumah", () => {
     gameState.setPreviousScene("village");
     k.go("halaman");
   });
-  entities.player.onCollide("exit-hutan-kiri", () => {
+
+  entities.player.player.onCollide("exit-hutan-kiri", () => {
     const currMission = gameState.getCurrMission();
     if (currMission >= 1) {
       gameState.setPreviousScene("village");
@@ -141,7 +126,8 @@ export default async function village(k) {
       );
     }
   });
-  entities.player.onCollide("exit-hutan-atas", () => {
+
+  entities.player.player.onCollide("exit-hutan-atas", () => {
     const currMission = gameState.getCurrMission();
     if (currMission >= 2) {
       gameState.setPreviousScene("village");
@@ -153,7 +139,8 @@ export default async function village(k) {
       );
     }
   });
-  entities.player.onCollide("exit-hutan-bawah", () => {
+
+  entities.player.player.onCollide("exit-hutan-bawah", () => {
     const currMission = gameState.getCurrMission();
     if (currMission >= 3) {
       gameState.setPreviousScene("village");
@@ -165,11 +152,6 @@ export default async function village(k) {
       );
     }
   });
-
-  //   entities.player.onCollide("dungeon-door-entrance", () => {
-  //     gameState.setPreviousScene("world");
-  //     k.go("dungeon");
-  //   });
 
   healthBar(k);
   generateIconsComponents(k);

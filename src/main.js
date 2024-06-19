@@ -268,4 +268,4 @@ k.onLoading((progress) => {
   });
 });
 
-k.go("menu");
+k.go("battle");

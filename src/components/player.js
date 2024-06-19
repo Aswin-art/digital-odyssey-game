@@ -1,107 +1,106 @@
 import { areAnyOfTheseKeysDown, playAnimIfNotPlaying } from "../../utils.js";
-import { gameState, playerState } from "../states/index.js";
+import { gameState } from "../states/index.js";
 import { playFootstepEffect } from "./backgroundMusic.js";
 
-export function generatePlayerComponents(k, pos) {
-  return [
-    // k.scale(1.2),
-    k.sprite("assets", {
-      anim: "player-idle-down",
-    }),
-    k.area({ shape: new k.Rect(k.vec2(3, 4), 10, 12) }),
-    k.body(),
-    k.pos(pos),
-    k.opacity(),
-    {
-      speed: 100,
-      attackPower: 1,
-      direction: "down",
-      isAttack: false,
-      isMoving: false,
-    },
-    "player",
-  ];
-}
+export class Player {
+  constructor(k, pos) {
+    this.k = k;
+    this.player = this.generatePlayerComponents(pos);
+    this.stopMovement = false;
+    this.initMovement();
+  }
 
-export function setPlayerMovement(k, player) {
-  let stopMovement = false;
+  generatePlayerComponents(pos) {
+    return this.k.add([
+      this.k.sprite("assets", {
+        anim: "player-idle-down",
+      }),
+      this.k.area({ shape: new this.k.Rect(this.k.vec2(3, 4), 10, 12) }),
+      this.k.body(),
+      this.k.pos(pos),
+      this.k.opacity(),
+      {
+        speed: 100,
+        attackPower: 1,
+        direction: "down",
+        isAttack: false,
+        isMoving: false,
+      },
+      "player",
+    ]);
+  }
 
-  player.onCollide("boundaries", () => {
-    stopMovement = true;
-    player.stop();
-    playFootstepEffect(false);
-  });
+  initMovement() {
+    this.player.onCollide("boundaries", () => {
+      this.stopMovement = true;
+      this.player.stop();
+      playFootstepEffect(false);
+    });
 
-  k.onKeyDown((key) => {
-    if (gameState.getFreezePlayer()) return;
-    if (stopMovement) return;
+    this.k.onKeyDown((key) => {
+      if (gameState.getFreezePlayer()) return;
+      if (this.stopMovement) return;
 
-    let moving = false;
+      let moving = false;
 
-    if (
-      ["left"].includes(key) &&
-      !areAnyOfTheseKeysDown(k, ["up", "down", "w", "s"])
-    ) {
-      player.flipX = true;
-      playAnimIfNotPlaying(player, "player-side");
-      player.move(-player.speed, 0);
-      player.direction = "left";
-      moving = true;
-    }
+      if (
+        ["left"].includes(key) &&
+        !areAnyOfTheseKeysDown(this.k, ["up", "down", "w", "s"])
+      ) {
+        this.player.flipX = true;
+        playAnimIfNotPlaying(this.player, "player-side");
+        this.player.move(-this.player.speed, 0);
+        this.player.direction = "left";
+        moving = true;
+      }
 
-    if (
-      ["right"].includes(key) &&
-      !areAnyOfTheseKeysDown(k, ["up", "down", "w", "s"])
-    ) {
-      player.flipX = false;
-      playAnimIfNotPlaying(player, "player-side");
-      player.move(player.speed, 0);
-      player.direction = "right";
-      moving = true;
-    }
+      if (
+        ["right"].includes(key) &&
+        !areAnyOfTheseKeysDown(this.k, ["up", "down", "w", "s"])
+      ) {
+        this.player.flipX = false;
+        playAnimIfNotPlaying(this.player, "player-side");
+        this.player.move(this.player.speed, 0);
+        this.player.direction = "right";
+        moving = true;
+      }
 
-    if (["up"].includes(key)) {
-      playAnimIfNotPlaying(player, "player-up");
-      player.move(0, -player.speed);
-      player.direction = "up";
-      moving = true;
-    }
+      if (["up"].includes(key)) {
+        playAnimIfNotPlaying(this.player, "player-up");
+        this.player.move(0, -this.player.speed);
+        this.player.direction = "up";
+        moving = true;
+      }
 
-    if (["down"].includes(key)) {
-      playAnimIfNotPlaying(player, "player-down");
-      player.move(0, player.speed);
-      player.direction = "down";
-      moving = true;
-    }
+      if (["down"].includes(key)) {
+        playAnimIfNotPlaying(this.player, "player-down");
+        this.player.move(0, this.player.speed);
+        this.player.direction = "down";
+        moving = true;
+      }
 
-    if (moving && !player.isMoving) {
-      player.isMoving = true;
-      playFootstepEffect(true);
-    }
-  });
+      if (moving && !this.player.isMoving) {
+        this.player.isMoving = true;
+        playFootstepEffect(true);
+      }
+    });
 
-  k.onKeyRelease((key) => {
-    if (!["left", "right", "up", "down"].includes(key)) return;
+    this.k.onKeyRelease((key) => {
+      if (!["left", "right", "up", "down"].includes(key)) return;
 
-    player.isAttack = false;
-    player.stop();
+      this.player.isAttack = false;
+      this.player.stop();
+      playFootstepEffect(false);
+      this.stopMovement = false;
+      this.player.isMoving = false;
 
-    playFootstepEffect(false);
-
-    stopMovement = false;
-
-    player.isMoving = false;
-
-    if (player.direction === "up") {
-      player.play("player-idle-up");
-    }
-
-    if (player.direction === "down") {
-      player.play("player-idle-down");
-    }
-
-    if (player.direction !== "up" && player.direction !== "down") {
-      player.play("player-idle-side");
-    }
-  });
+      if (this.player.direction === "up") {
+        this.player.play("player-idle-up");
+      } else if (this.player.direction === "down") {
+        this.player.play("player-idle-down");
+      } else {
+        this.player.play("player-idle-side");
+      }
+    });
+  }
 }

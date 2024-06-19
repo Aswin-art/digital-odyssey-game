@@ -4,8 +4,9 @@ import {
   playBackgroundMusic,
   playSelectEffect,
 } from "../components/backgroundMusic.js";
-import { generatePlayerComponents } from "../components/player.js";
 import { gameState, NPCState, playerState } from "../states/index.js";
+import { Player } from "../components/player.js";
+import { Monster } from "../components/monster.js"; // Import Monster class
 
 const playerMaxHealth = playerState.getMaxHealth();
 let playerHealth = playerState.getHealth();
@@ -224,6 +225,9 @@ export default async function battle(k) {
   let timer = 30;
   let timerInterval;
 
+  const player = new Player(k); // Create Player instance
+  const monster = new Monster(k); // Create Monster instance
+
   function startTimer() {
     timer = 30;
     timerText.text = `Time: ${timer}`;
@@ -239,7 +243,7 @@ export default async function battle(k) {
       timerBar.width = (timer / 30) * 1535;
       if (timer <= 0) {
         clearInterval(timerInterval);
-        handleIncorrectAnswer();
+        monster.handleIncorrectAnswer(playerMonHealthBar, playerMon);
       }
     }, 1000);
   }
@@ -261,123 +265,6 @@ export default async function battle(k) {
       ]);
       answerElements.push(answerElement);
     });
-  }
-
-  function reducePlayerHealth(healthBar, damageDealt, mon) {
-    const playerMaxHealth = playerState.getMaxHealth();
-    playerHealth -= damageDealt;
-    playerState.setHealth(playerHealth);
-    playAttackEffect();
-
-    const healthPercentage = playerHealth / playerMaxHealth;
-    const newWidth = healthPercentage * 270;
-
-    k.tween(
-      healthBar.width,
-      newWidth,
-      0.5,
-      (val) => (healthBar.width = val),
-      k.easings.easeInSine
-    ).then(() => {
-      makeMonFlash(mon);
-    });
-  }
-
-  function reduceMonsterHealth(enemyMonHealthBar, damageDealt, enemyMon) {
-    playAttackEffect();
-
-    k.tween(
-      enemyMonHealthBar.width,
-      enemyMonHealthBar.width - damageDealt,
-      0.5,
-      (val) => (enemyMonHealthBar.width = val),
-      k.easings.easeInSine
-    ).then(() => {
-      makeMonFlash(enemyMon);
-    });
-  }
-
-  function makeMonFlash(mon) {
-    k.tween(
-      mon.opacity,
-      0,
-      0.3,
-      (val) => {
-        mon.opacity = val;
-        if (mon.opacity === 0) {
-          mon.opacity = 1;
-        }
-      },
-      k.easings.easeInBounce
-    );
-  }
-
-  function colorizeHealthBar(healthBar) {
-    if (healthBar.width < 200) {
-      healthBar.use(k.color(250, 150, 0));
-    }
-
-    if (healthBar.width < 100) {
-      healthBar.use(k.color(200, 0, 0));
-    }
-  }
-
-  function makeMonDrop(mon) {
-    k.tween(
-      mon.pos.y,
-      800,
-      0.5,
-      (val) => (mon.pos.y = val),
-      k.easings.easeInSine
-    );
-  }
-
-  function handleCorrectAnswer() {
-    content.text = "Jawaban benar!";
-    const timeBonus = timer > 20 ? 2 : 1;
-    // const baseHit = 100;
-    const baseHit = 40;
-    const hit = baseHit;
-    const criticalChance = timer > 20 ? Math.random() : 0;
-    const damageDealt = criticalChance > 0.8 ? hit * 2 : hit;
-    reduceMonsterHealth(enemyMonHealthBar, damageDealt, enemyMon);
-    playerState.addPoint(10 * timeBonus);
-    // correctSound.play();
-    nextQuestion();
-  }
-
-  function handleIncorrectAnswer() {
-    content.text = "Jawaban salah!";
-    const baseHit = 20;
-    reducePlayerHealth(playerMonHealthBar, baseHit, playerMon);
-    nextQuestion();
-  }
-
-  function nextQuestion() {
-    clearInterval(timerInterval);
-    if (phase === "end") {
-      answerElements.forEach((element) => element.destroy());
-      k.destroyAll("answers");
-      content.text =
-        "Pertandingan berakhir. Tekan Enter untuk kembali ke dunia.";
-      k.onKeyPress("enter", () => {
-        gameState.setSoundTheme("explore");
-        playBackgroundMusic();
-        k.go(gameState.getPreviousScene());
-      });
-      return;
-    }
-
-    currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
-    phase = "answer";
-
-    setTimeout(() => {
-      if (phase !== "end") {
-        phase = "question";
-        displayQuestion();
-        startTimer();
-      }
-    }, 2000);
   }
 
   function showGameOverModal(text) {
@@ -453,16 +340,13 @@ export default async function battle(k) {
     if (phase !== "question") return;
 
     if (selectedAnswerIndex === questions[currentQuestionIndex].correct) {
-      handleCorrectAnswer();
+      player.handleCorrectAnswer(enemyMonHealthBar, enemyMon);
     } else {
-      handleIncorrectAnswer();
+      monster.handleIncorrectAnswer(playerMonHealthBar, playerMon);
     }
   });
 
   k.onUpdate(() => {
-    colorizeHealthBar(playerMonHealthBar);
-    colorizeHealthBar(enemyMonHealthBar);
-
     if (enemyMonHealthBar.width <= 0 && !enemyMon.fainted) {
       if (gameState.getPreviousScene() == "hutanKiri") {
         NPCState.setNumberTalkedOldMan(0);
