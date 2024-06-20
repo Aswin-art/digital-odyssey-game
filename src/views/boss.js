@@ -7,12 +7,12 @@ import {
 import { Player } from "../models/player.js";
 import { Monster } from "../models/monster.js";
 import { gameState } from "../states/index.js";
-import { healthBar } from "../controllers/healthbar.js";
+import { healthBar } from "../components/healthbar.js";
 import {
   generateArrowKeyComponents,
   generateIconsComponents,
   generateInventoryBarComponents,
-} from "../controllers/icons.js";
+} from "../components/icons.js";
 
 export default async function boss(k) {
   colorizeBackground(k, 27, 29, 52);

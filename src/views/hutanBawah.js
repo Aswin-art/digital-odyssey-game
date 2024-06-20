@@ -6,14 +6,14 @@ import {
 } from "../../utils.js";
 import { Player } from "../models/player.js"; // Import the Player class
 import { gameState } from "../states/index.js";
-import { healthBar } from "../controllers/healthbar.js";
+import { healthBar } from "../components/healthbar.js";
 import {
   generateArrowKeyComponents,
   generateIconsComponents,
   generateInventoryBarComponents,
-} from "../controllers/icons.js";
+} from "../components/icons.js";
 import { Monster } from "../models/monster.js";
-import { warningDialog } from "../controllers/warningDialog.js";
+import { warningDialog } from "../components/warningDialog.js";
 
 export default async function hutanBawah(k) {
   colorizeBackground(k, 27, 29, 52);

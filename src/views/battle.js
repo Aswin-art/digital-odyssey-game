@@ -3,7 +3,7 @@ import {
   playAttackEffect,
   playBackgroundMusic,
   playSelectEffect,
-} from "../controllers/backgroundMusic.js";
+} from "../components/backgroundMusic.js";
 import { gameState, NPCState, playerState } from "../states/index.js";
 
 const playerMaxHealth = playerState.getMaxHealth();

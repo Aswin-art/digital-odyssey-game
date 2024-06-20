@@ -1,5 +1,5 @@
 import { colorizeBackground } from "../../utils.js";
-import { stopBackgroundMusic } from "../controllers/backgroundMusic.js";
+import { stopBackgroundMusic } from "../components/backgroundMusic.js";
 import { gameState, playerState } from "../states/index.js";
 
 export default function gameover(k, state = "lose") {

@@ -1,6 +1,6 @@
 import { areAnyOfTheseKeysDown, playAnimIfNotPlaying } from "../../utils.js";
 import { gameState, playerState } from "../states/index.js";
-import { playFootstepEffect } from "../controllers/backgroundMusic.js";
+import { playFootstepEffect } from "../components/backgroundMusic.js";
 
 export class Player {
   constructor(k, pos) {

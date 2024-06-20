@@ -268,4 +268,4 @@ k.onLoading((progress) => {
   });
 });
 
-k.go("halaman");
+k.go("menu");

@@ -6,12 +6,12 @@ import {
 } from "../../utils.js";
 import { Player } from "../models/player.js"; // Correctly import the Player class
 import { gameState } from "../states/index.js";
-import { healthBar } from "../controllers/healthbar.js";
+import { healthBar } from "../components/healthbar.js";
 import {
   generateArrowKeyComponents,
   generateIconsComponents,
   generateInventoryBarComponents,
-} from "../controllers/icons.js";
+} from "../components/icons.js";
 
 export default async function house(k) {
   colorizeBackground(k, 27, 29, 52);
