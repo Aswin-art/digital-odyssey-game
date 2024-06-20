@@ -4,25 +4,25 @@ import {
   drawTiles,
   fetchMapData,
 } from "../../utils.js";
-import { Player } from "../components/player.js"; // Correctly import the Player class
+import { Player } from "../models/player.js"; // Correctly import the Player class
 import { gameState } from "../states/index.js";
-import { healthBar } from "../states/healthbar.js";
+import { healthBar } from "../controllers/healthbar.js";
 import {
   generateArrowKeyComponents,
   generateIconsComponents,
   generateInventoryBarComponents,
-} from "../components/icons.js";
+} from "../controllers/icons.js";
 
-export default async function halaman(k) {
+export default async function house(k) {
   colorizeBackground(k, 27, 29, 52);
+  const mapData = await fetchMapData("/assets/map/house.json");
   gameState.setCurrScene("halaman");
-  const mapData = await fetchMapData("/assets/map/halaman-rumah.json");
 
   const map = k.add([k.pos(0, 0)]);
 
   const entities = {
     player: null,
-    slimes: [],
+    oldman: null,
   };
 
   const layers = mapData.layers;
@@ -35,34 +35,17 @@ export default async function halaman(k) {
 
     if (layer.name === "SpawnPoints") {
       for (const object of layer.objects) {
-        if (
-          object.name === "player-entrance" &&
-          gameState.getPreviousScene() === "village"
-        ) {
-          entities.player = new Player(k, k.vec2(object.x, object.y));
-        }
-
-        if (
-          object.name === "player" &&
-          gameState.getPreviousScene() !== "village"
-        ) {
+        if (object.name === "player") {
           entities.player = new Player(k, k.vec2(object.x, object.y));
         }
       }
       continue;
     }
 
-    drawTiles(
-      k,
-      "topdown-assets",
-      map,
-      layer,
-      mapData.tileheight,
-      mapData.tilewidth
-    );
+    drawTiles(k, "assets", map, layer, mapData.tileheight, mapData.tilewidth);
   }
 
-  k.camScale(5);
+  k.camScale(6);
   k.camPos(entities.player.player.worldPos()); // Adjusted to access the player instance's properties
 
   k.onUpdate(async () => {
@@ -78,16 +61,10 @@ export default async function halaman(k) {
     }
   });
 
-  entities.player.player.onCollide("exit-village", () => {
+  entities.player.player.onCollide("door-exit", () => {
     // Adjusted to access the player instance's properties
-    gameState.setPreviousScene("halaman");
-    k.go("village");
-  });
-
-  entities.player.player.onCollide("exit-rumah", () => {
-    // Adjusted to access the player instance's properties
-    gameState.setPreviousScene("halaman");
-    k.go("house");
+    gameState.setPreviousScene("house");
+    k.go("halaman");
   });
 
   healthBar(k);

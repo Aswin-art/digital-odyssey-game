@@ -1,7 +1,7 @@
 import { playAnimIfNotPlaying } from "../../utils.js";
 import npcLines from "../contents/NPCDialogue.js";
 import { gameState, NPCState, playerState } from "../states/index.js";
-import { dialogue } from "../states/dialogue.js";
+import { dialogue } from "./dialogue.js";
 
 export function generateNPCComponents(k, pos) {
   return [
@@ -34,15 +34,12 @@ export async function startInteraction(k, npc, player) {
     playAnimIfNotPlaying(npc, "oldman-down");
   }
 
-  let currMission = gameState.getCurrMission();
-
   if (
-    currMission == null ||
+    gameState.getCurrMission() == null ||
     (gameState.getCurrMission() == 1 && !gameState.getMonster1())
   ) {
     gameState.setCurrMission(1);
     const responses = npcLines["misi1"];
-    currMission = 1;
 
     let numberTalked = NPCState.getNumberTalkedOldMan();
     if (numberTalked >= 3) {
@@ -68,7 +65,6 @@ export async function startInteraction(k, npc, player) {
       playerState.addCoin(30);
     }
     gameState.setCurrMission(2);
-    currMission = 2;
     const responses = npcLines["misi2"];
 
     let numberTalked = NPCState.getNumberTalkedOldMan();

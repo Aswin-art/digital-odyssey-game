@@ -4,20 +4,20 @@ import {
   drawTiles,
   fetchMapData,
 } from "../../utils.js";
-import { Player } from "../components/player.js"; // Import the Player class
+import { Player } from "../models/player.js"; // Import the Player class
 import { gameState } from "../states/index.js";
-import { healthBar } from "../states/healthbar.js";
+import { healthBar } from "../controllers/healthbar.js";
 import {
   generateArrowKeyComponents,
   generateIconsComponents,
   generateInventoryBarComponents,
-} from "../components/icons.js";
+} from "../controllers/icons.js";
 import {
   endInteraction,
   generateNPCComponents,
   startInteraction,
-} from "../components/npc.js";
-import { warningDialog } from "../components/warningDialog.js";
+} from "../controllers/npc.js";
+import { warningDialog } from "../controllers/warningDialog.js";
 
 export default async function village(k) {
   colorizeBackground(k, 27, 29, 52);

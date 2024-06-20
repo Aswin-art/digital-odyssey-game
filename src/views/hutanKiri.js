@@ -4,15 +4,15 @@ import {
   drawTiles,
   fetchMapData,
 } from "../../utils.js";
-import { Player } from "../components/player.js"; // Import the Player class
+import { Player } from "../models/player.js"; // Import the Player class
 import { gameState } from "../states/index.js";
-import { healthBar } from "../states/healthbar.js";
+import { healthBar } from "../controllers/healthbar.js";
 import {
   generateArrowKeyComponents,
   generateIconsComponents,
   generateInventoryBarComponents,
-} from "../components/icons.js";
-import { Monster } from "../components/monster.js";
+} from "../controllers/icons.js";
+import { Monster } from "../models/monster.js";
 
 export default async function hutanKiri(k) {
   colorizeBackground(k, 27, 29, 52);

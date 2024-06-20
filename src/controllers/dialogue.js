@@ -1,8 +1,5 @@
-import {
-  playTypingEffect,
-  stopTypingEffect,
-} from "../components/backgroundMusic.js";
-import { gameState } from "./index.js";
+import { playTypingEffect, stopTypingEffect } from "./backgroundMusic.js";
+import { gameState } from "../states/index.js";
 
 async function displayLine(textContainer, line) {
   playTypingEffect();

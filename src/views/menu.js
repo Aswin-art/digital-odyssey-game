@@ -1,5 +1,5 @@
 import { colorizeBackground } from "../../utils.js";
-import { playBackgroundMusic } from "../components/backgroundMusic.js";
+import { playBackgroundMusic } from "../controllers/backgroundMusic.js";
 import { gameState } from "../states/index.js";
 
 export default function menu(k) {

@@ -4,26 +4,26 @@ import {
   drawTiles,
   fetchMapData,
 } from "../../utils.js";
-import { Player } from "../components/player.js";
-import { Monster } from "../components/monster.js";
+import { Player } from "../models/player.js"; // Import the Player class
 import { gameState } from "../states/index.js";
-import { healthBar } from "../states/healthbar.js";
+import { healthBar } from "../controllers/healthbar.js";
 import {
   generateArrowKeyComponents,
   generateIconsComponents,
   generateInventoryBarComponents,
-} from "../components/icons.js";
+} from "../controllers/icons.js";
+import { Monster } from "../models/monster.js";
 
-export default async function boss(k) {
+export default async function hutanAtas(k) {
   colorizeBackground(k, 27, 29, 52);
-  const mapData = await fetchMapData("/assets/map/boss.json");
-  gameState.setCurrScene("boss");
+  const mapData = await fetchMapData("./assets/map/hutan-atas.json");
+  gameState.setCurrScene("hutan-atas");
 
   const map = k.add([k.pos(0, 0)]);
 
   const entities = {
     player: null,
-    boss: null,
+    monster: null,
   };
 
   const layers = mapData.layers;
@@ -40,13 +40,13 @@ export default async function boss(k) {
           entities.player = new Player(k, k.vec2(object.x, object.y));
         }
 
-        if (object.name === "boss") {
-          entities.boss = new Monster(
+        if (object.name === "monster" && !gameState.getMonster2()) {
+          entities.monster = new Monster(
             k,
-            k.vec2(object.x - 15, object.y - 15),
-            "",
-            "boss"
-          ).boss;
+            k.vec2(object.x, object.y),
+            "slime-idle-down",
+            "monster"
+          ).monster;
         }
       }
       continue;
@@ -63,6 +63,7 @@ export default async function boss(k) {
   }
 
   k.camScale(5);
+
   k.camPos(entities.player.player.worldPos());
 
   k.onUpdate(async () => {
@@ -76,9 +77,10 @@ export default async function boss(k) {
       );
     }
   });
-  entities.player.player.onCollide("exit-hutan-bawah", () => {
-    gameState.setPreviousScene("boss");
-    k.go("hutanBawah");
+
+  entities.player.player.onCollide("exit-village", () => {
+    gameState.setPreviousScene("hutanAtas");
+    k.go("village");
   });
 
   function flashScreen() {
@@ -97,10 +99,11 @@ export default async function boss(k) {
     );
   }
 
-  entities.player.player.onCollide("boss", () => {
+  entities.player.player.onCollide("monster", () => {
+    gameState.setFreezePlayer(true);
     flashScreen();
     setTimeout(() => {
-      gameState.setPreviousScene("boss");
+      gameState.setPreviousScene("hutanAtas");
       k.go("battle");
     }, 1000);
   });

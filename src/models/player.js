@@ -1,12 +1,16 @@
 import { areAnyOfTheseKeysDown, playAnimIfNotPlaying } from "../../utils.js";
-import { gameState } from "../states/index.js";
-import { playFootstepEffect } from "./backgroundMusic.js";
+import { gameState, playerState } from "../states/index.js";
+import { playFootstepEffect } from "../controllers/backgroundMusic.js";
 
 export class Player {
   constructor(k, pos) {
     this.k = k;
     this.player = this.generatePlayerComponents(pos);
     this.stopMovement = false;
+    this.health = playerState.getHealth();
+    this.attackPower = 1;
+    this.direction = "down";
+    this.speed = 100;
     this.initMovement();
   }
 
@@ -29,6 +33,16 @@ export class Player {
       "player",
     ]);
   }
+
+  getHealth() {
+    return this.health;
+  }
+
+  setHealth(value) {
+    return playerState.setHealth(value);
+  }
+
+  attackMonster() {}
 
   initMovement() {
     this.player.onCollide("boundaries", () => {

@@ -1,10 +1,13 @@
 export class Monster {
   constructor(k, pos, monsterPosition, monsterType) {
     this.k = k;
+    this.health = 100;
+    this.attackPower = 20;
+    this.direction = monsterPosition;
     if (monsterType == "boss") {
       this.boss = this.generateBossComponents(pos);
     } else {
-      this.monster = this.generateMonsterComponents(pos, monsterPosition);
+      this.monster = this.generateMonsterComponents(pos, this.direction);
     }
     this.stopMovement = false;
   }
@@ -19,13 +22,6 @@ export class Monster {
       this.k.pos(pos),
       this.k.offscreen(),
       this.k.opacity(),
-      {
-        speed: 30,
-        attackPower: 0.5,
-        direction: "down",
-        isAttack: false,
-        isMoving: false,
-      },
       "monster",
     ]);
   }
@@ -49,4 +45,6 @@ export class Monster {
       "boss",
     ]);
   }
+
+  attackPlayer() {}
 }

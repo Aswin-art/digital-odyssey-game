@@ -1,4 +1,4 @@
-import { playerState } from "./index.js";
+import { playerState } from "../states/index.js";
 
 function colorizeHealthBar(k, healthBar) {
   if (healthBar.width < 200) {

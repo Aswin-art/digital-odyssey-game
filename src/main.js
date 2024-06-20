@@ -1,14 +1,14 @@
 import kaboom from "kaboom";
-import house from "./scenes/house";
-import halaman from "./scenes/halaman";
-import hutanKiri from "./scenes/hutanKiri";
-import village from "./scenes/village";
-import battle from "./scenes/battle";
-import hutanAtas from "./scenes/hutanAtas";
-import hutanBawah from "./scenes/hutanBawah";
-import boss from "./scenes/boss";
-import menu from "./scenes/menu";
-import gameover from "./scenes/gameover";
+import house from "./views/house";
+import halaman from "./views/halaman";
+import hutanKiri from "./views/hutanKiri";
+import village from "./views/village";
+import battle from "./views/battle";
+import hutanAtas from "./views/hutanAtas";
+import hutanBawah from "./views/hutanBawah";
+import boss from "./views/boss";
+import menu from "./views/menu";
+import gameover from "./views/gameover";
 
 const k = kaboom({
   width: window.innerWidth,
@@ -268,4 +268,4 @@ k.onLoading((progress) => {
   });
 });
 
-k.go("battle");
+k.go("halaman");
